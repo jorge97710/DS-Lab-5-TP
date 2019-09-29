@@ -5,6 +5,7 @@ noticias <- readLines(noticiasdata)  #newsdata
 close(noticiasdata)
 rm(noticiasdata) 
 library("tm")
+library(dplyr)
 #limpieza
 twitterdata <- Corpus(VectorSource(twitterdata))                     
 twitterdata = tm_map(twitterdata, content_transformer(tolower))       
@@ -43,3 +44,20 @@ matrizdocumentacion <- TermDocumentMatrix(noticias)
 
 barplot(d[1:10,]$freq, las = 2, names.arg = d[1:10,]$word, main ="en_US.news")
 hist(d[1:50,]$freq, las = 2,  main ="en_US.news")
+#prediccion
+predicciondetexto <- function(textoobtenido, thecorpus = thebigcorpus, minimum.n = 2, npredobtenidas = 3){
+  ngrama <- unnest_tokens(corpus, ngram, 
+                               corpus,
+                               token = "ngrams",
+                               n = minimum.n + 1)
+  
+  palabras_clave <- ultimaspalabras(workingtext, minimum.n) 
+  palabras_clave <- paste0("^",palabras_clave, collapse = "") 
+  ngrama <- filter(ngrama, grepl(palabras_clave,ngram)) 
+  tablaprediccion <- sort(table(sapply(ngrama$ngram,ultimaspalabras, USE.NAMES = FALSE)), decreasing = TRUE)
+  tablaprediccion <- round(tablaprediccion / sum(tablaprediccion),2) 
+  if(length(tablaprediccion) < npredobtenidas){  
+    npredobtenidas <- length(tablaprediccion)}
+  return(tablaprediccion[1:npredobtenidas])
+  
+}
