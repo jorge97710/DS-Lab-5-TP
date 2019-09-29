@@ -14,9 +14,9 @@ matrizdocumentacion <- TermDocumentMatrix(twitterdata)
 
 #se repite lo mismo para cada uno de los casos 
 value1<-matrizdocumentacion[sample(1:matrizdocumentacion$nrow,0.5*matrizdocumentacion$nrow),]
-value2<- as.matrix(x)
-value3 <- sort(rowSums(m),decreasing=TRUE)
-d <- data.frame(word = names(v),freq=v)
+value2<- as.matrix(value1)
+value3 <- sort(rowSums(value2),decreasing=TRUE)
+d <- data.frame(word = names(value3),freq=value3)
 
 findFreqTerms(matrizdocumentacion, lowfreq = 4)
 
